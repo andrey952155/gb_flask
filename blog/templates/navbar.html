@@ -1,0 +1,16 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        {% for (endpoint, label) in [('users_app.list', 'Пользователи'), ('articles_app.list', 'Статьи')] %}
+          <a href="{{ url_for(endpoint) }}" class="nav-link {% if request.endpoint == endpoint -%}active{%- endif %}">
+          {{ label }}
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+
