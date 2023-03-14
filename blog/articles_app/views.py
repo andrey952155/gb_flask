@@ -1,8 +1,6 @@
 from flask import Blueprint, render_template
 from werkzeug.exceptions import NotFound
 
-from blog.users_app.views import USERS
-
 articles_app = Blueprint("articles_app", __name__, url_prefix='/articles', static_folder='../static')
 
 ARTICLES = {
@@ -22,7 +20,7 @@ def articles_details(pk: int):
     try:
         title = ARTICLES[pk]['title']
         text = ARTICLES[pk]['text']
-        author = {'id': ARTICLES[pk]['author'], 'author': USERS[ARTICLES[pk]['author']]}
+        author = {'id': ARTICLES[pk]['author'], 'author': USERS[ARTICLES[pk]['author']]}  # это надо переделать
     except KeyError:
         raise NotFound(f"Articles #{pk} doesn't exist!")
     return render_template('articles/details.html', title=title, text=text, author=author)
