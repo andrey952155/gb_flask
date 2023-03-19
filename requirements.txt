@@ -3,3 +3,6 @@ Flask-SQLAlchemy
 Flask-Login
 psycopg2
 Flask-Migrate
+WTForms
+email-validator
+Flask-WTF
