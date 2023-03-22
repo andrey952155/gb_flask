@@ -83,5 +83,5 @@ def register():
         else:
             current_app.logger.info("Created user %s", user)
             login_user(user)
-            return redirect('login')
+            return redirect(url_for('auth_app.login'))
     return render_template("auth/register.html", form=form, error=error)

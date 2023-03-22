@@ -5,8 +5,9 @@
 <div>
   <ul>
     {% for item in articles %}
-    <li><a href="{{ url_for('articles_app.details', pk=item) }}">{{ articles[item].title }}</a></li>
+    <li><a href="{{ url_for('articles_app.details', article_id=item.id) }}">{{ item.title }}</a></li>
     {% endfor %}
   </ul>
+  <hr><a href="{{ url_for('articles_app.create') }}">Create new</a>
 </div>
 {% endblock %}

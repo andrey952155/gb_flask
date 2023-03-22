@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        {% for (endpoint, label) in [('users_app.list', 'Пользователи'), ('articles_app.list', 'Статьи')] %}
+        {% for (endpoint, label) in [('users_app.list', 'Пользователи'), ('articles_app.list', 'Статьи'), ('authors_app.list', 'Авторы')] %}
           <a href="{{ url_for(endpoint) }}" class="nav-link {% if request.endpoint == endpoint -%}active{%- endif %}">
           {{ label }}
           </a>

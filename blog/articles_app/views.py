@@ -1,27 +1,53 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request, current_app, redirect, url_for
+from flask_login import login_required, current_user
+from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import NotFound
 
-articles_app = Blueprint("articles_app", __name__, url_prefix='/articles', static_folder='../static')
+from blog.forms.article import CreateArticleForm
+from blog.models import Article, Author
+from blog.models.database import db
 
-ARTICLES = {
-    1: {'title': 'Заголовок 1', 'text': 'Какой-то текст', 'author': 1},
-    2: {'title': 'Заголовок 2', 'text': 'Какой-то текст', 'author': 2},
-    3: {'title': 'Заголовок 3', 'text': 'Какой-то текст', 'author': 3},
-}
+articles_app = Blueprint("articles_app", __name__, url_prefix='/articles', static_folder='../static')
 
 
 @articles_app.route("/", endpoint="list")
 def articles_list():
-    return render_template("articles/list.html", articles=ARTICLES)
+    articles = Article.query.all()
+    return render_template("articles/list.html", articles=articles)
 
 
-@articles_app.route("/<int:pk>/", endpoint="details")
-def articles_details(pk: int):
-    try:
-        title = ARTICLES[pk]['title']
-        text = ARTICLES[pk]['text']
-        author = {'id': ARTICLES[pk]['author'], 'author': USERS[ARTICLES[pk]['author']]}  # это надо переделать
-    except KeyError:
-        raise NotFound(f"Articles #{pk} doesn't exist!")
-    return render_template('articles/details.html', title=title, text=text, author=author)
+@articles_app.route("/<int:article_id>/", endpoint="details")
+def article_details(article_id):
+    article = Article.query.filter_by(id=article_id).one_or_none()
+    if article is None:
+        raise NotFound
+    return render_template("articles/details.html", article=article)
+
+
+@articles_app.route("/create/", methods=["GET", "POST"], endpoint="create")
+@login_required
+def create_article():
+    error = None
+    form = CreateArticleForm(request.form)
+    if request.method == "POST" and form.validate_on_submit():
+        article = Article(title=form.title.data.strip(), body=form.body.data)
+        db.session.add(article)
+        if current_user.author:
+            # use existing author if present
+            article.author = current_user.author
+        else:
+            # otherwise create author record
+            author = Author(user_id=current_user.id)
+            db.session.add(author)
+            db.session.flush()
+        try:
+            db.session.commit()
+        except IntegrityError:
+            current_app.logger.exception("Could not create a new article!")
+            error = "Could not create article!"
+        else:
+            return redirect(url_for("articles_app.details", article_id=article.id))
+    return render_template("articles/create.html", form=form, error=error)
+
+
 

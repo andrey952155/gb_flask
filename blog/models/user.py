@@ -1,5 +1,6 @@
 from flask_login import UserMixin
 from sqlalchemy import Integer, String, Boolean, Column
+from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from blog.models.database import db
@@ -13,6 +14,7 @@ class User(db.Model, UserMixin):
     last_name = Column(String(120), unique=False, nullable=False, default="", server_default="")
     _password = Column(String(100), nullable=True)
     is_staff = Column(Boolean, nullable=False, default=False)
+    author = relationship("Author", uselist=False, back_populates="user")
 
     def __init__(self, username, email, first_name=None, last_name=None, is_staff=False):
         self.username = username
