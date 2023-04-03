@@ -1,8 +1,10 @@
 import os
 
 from flask import Flask
+from flask_admin import Admin
 from flask_migrate import Migrate
 
+from blog.admin import admin
 from blog.articles_app.views import articles_app
 from blog.auth_app.views import auth_app, login_manager
 from blog.authors.wies import authors_app
@@ -19,10 +21,10 @@ def create_app() -> Flask:
     app.config.from_object(f"blog.configs.{cfg_name}")
     db.init_app(app)
     migrate = Migrate(app, db)
-
     login_manager.init_app(app)
-
+    # admin = Admin(app, name='microblog', template_mode='bootstrap3')
     register_blueprints(app)
+    admin.init_app(app)
     return app
 
 
