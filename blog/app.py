@@ -5,6 +5,7 @@ from flask_admin import Admin
 from flask_migrate import Migrate
 
 from blog.admin import admin
+from blog.api import init_api
 from blog.articles_app.views import articles_app
 from blog.auth_app.views import auth_app, login_manager
 from blog.authors.wies import authors_app
@@ -25,6 +26,7 @@ def create_app() -> Flask:
     # admin = Admin(app, name='microblog', template_mode='bootstrap3')
     register_blueprints(app)
     admin.init_app(app)
+    api = init_api(app)
     return app
 
 
